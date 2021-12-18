@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Paper,
   TableContainer,
@@ -11,75 +11,20 @@ import {
   Button,
 } from "@mui/material";
 import Paginator from "../../../shared/paging/Paginator";
-import usePaging from "../../../shared/paging/usePaging";
-import { getPhotos } from "./photosApi";
+import usePhotosTable from "./usePhotosTable";
 import "./PhotosTable.css";
 
 const PhotosTable = () => {
-  const [photos, setPhotos] = useState([]);
-  const { pageNumber, handlePageChange, getPageRows } = usePaging();
-
-  useEffect(() => {
-    getPhotos().then((data) => {
-      const nextPhotos = data.map((photo) => ({
-        ...photo,
-        editing: false,
-        editedTitle: photo.title,
-        editedTitleError: false,
-      }));
-
-      setPhotos(nextPhotos);
-    });
-  }, []);
-
-  const pagePhotos = getPageRows(photos);
-
-  const handlePhotoEdit = (photoId) => {
-    const nextPhotos = photos.map((photo) =>
-      photo.id === photoId
-        ? {
-            ...photo,
-            editing: true,
-          }
-        : photo
-    );
-
-    setPhotos(nextPhotos);
-  };
-
-  const handlePhotoTitleChange = (photoId, e) => {
-    const nextPhotos = photos.map((photo) =>
-      photo.id === photoId
-        ? {
-            ...photo,
-            editedTitle: e.target.value,
-            editedTitleError: !e.target.value.trim(),
-          }
-        : photo
-    );
-
-    setPhotos(nextPhotos);
-  };
-
-  const handlePhotoEditDone = (photoId) => {
-    const nextPhotos = photos.map((photo) =>
-      photo.id === photoId
-        ? {
-            ...photo,
-            editing: false,
-            title: photo.editedTitle.trim(), // discard whitespace when committing the title
-            editedTitle: photo.editedTitle.trim(),
-          }
-        : photo
-    );
-
-    setPhotos(nextPhotos);
-  };
-
-  const handlePhotoDelete = (photoId) => {
-    const nextPhotos = photos.filter((photo) => photo.id !== photoId);
-    setPhotos(nextPhotos);
-  };
+  const {
+    pagePhotos,
+    pageNumber,
+    totalPhotosCount,
+    handlePageChange,
+    handlePhotoEdit,
+    handlePhotoTitleChange,
+    handlePhotoEditDone,
+    handlePhotoDelete,
+  } = usePhotosTable();
 
   return (
     <Paper className="table" sx={{ width: "66.6667%" }}>
@@ -159,7 +104,7 @@ const PhotosTable = () => {
       </TableContainer>
       <Paginator
         pageNumber={pageNumber}
-        totalCount={photos.length}
+        totalCount={totalPhotosCount}
         onPageChange={handlePageChange}
       />
     </Paper>
