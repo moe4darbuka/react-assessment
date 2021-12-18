@@ -1,3 +1,11 @@
 .photos-table__row-img {
   width: 100px;
 }
+
+.MuiButton-root.table__action-button {
+  margin-right: 8px;
+}
+
+.MuiButton-root.table__action-button:last-child {
+  margin-right: 0;
+}
