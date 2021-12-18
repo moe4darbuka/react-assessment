@@ -136,6 +136,7 @@ const PhotosTable = () => {
                       variant="contained"
                       size="small"
                       color="success"
+                      disabled={photo.editedTitleError}
                       onClick={() => handlePhotoEditDone(photo.id)}
                     >
                       Done
