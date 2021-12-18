@@ -1,10 +1,18 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import usePaging from "../../../shared/paging/usePaging";
 import { getPhotos } from "./photosApi";
+import { useStateWithRef, getRandomInteger } from "../../../shared/utils";
 
 const usePhotosTable = () => {
-  const [photos, setPhotos] = useState([]);
-  const { pageNumber, handlePageChange, getPageRows } = usePaging();
+  const [photos, setPhotos, photosRef] = useStateWithRef([]);
+
+  const {
+    pageNumber,
+    pageFirstRowIndex,
+    pageLastRowIndex,
+    handlePageChange,
+    getPageRows,
+  } = usePaging({ totalRowsCount: photos.length });
 
   const handlePhotoEdit = (photoId) => {
     const nextPhotos = photos.map((photo) =>
@@ -65,6 +73,24 @@ const usePhotosTable = () => {
       setPhotos(nextPhotos);
     });
   }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const nextPhotos = photosRef.current.map((photo, index) =>
+        index >= pageFirstRowIndex && index <= pageLastRowIndex
+          ? {
+              ...photo,
+              id: getRandomInteger(1, 1000000),
+              albumId: getRandomInteger(1, 1000000),
+            }
+          : photo
+      );
+
+      setPhotos(nextPhotos);
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, [photosRef, pageFirstRowIndex, pageLastRowIndex]);
 
   return {
     pagePhotos: getPageRows(photos),
