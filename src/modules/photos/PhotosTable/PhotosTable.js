@@ -23,8 +23,10 @@ const PhotosTable = () => {
     handlePageChange,
     handlePhotoEdit,
     handlePhotoTitleChange,
+    handlePhotoTitleClick,
     handlePhotoEditDone,
     handlePhotoDelete,
+    handleRowClick,
   } = usePhotosTable();
 
   return (
@@ -42,7 +44,7 @@ const PhotosTable = () => {
           </TableHead>
           <TableBody>
             {pagePhotos.map((photo) => (
-              <TableRow key={photo.id}>
+              <TableRow key={photo.id} onClick={() => handleRowClick(photo.id)}>
                 <TableCell>{photo.id}</TableCell>
                 <TableCell>{photo.albumId}</TableCell>
                 <TableCell>
@@ -55,6 +57,7 @@ const PhotosTable = () => {
                       value={photo.editedTitle}
                       error={photo.editedTitleError}
                       onChange={(e) => handlePhotoTitleChange(e, photo.id)}
+                      onClick={handlePhotoTitleClick}
                     />
                   )}
                 </TableCell>

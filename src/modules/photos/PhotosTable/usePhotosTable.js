@@ -6,10 +6,12 @@ import {
   useOutsideClick,
   getRandomInteger,
 } from "../../../shared/utils";
+import { PAGE_SIZE } from "../../../shared/paging/constants";
 
 const usePhotosTable = () => {
   const [photos, setPhotos, photosRef] = useStateWithRef([]);
   const [randomized, setRandomized] = useState(true);
+  const [randomizedRowIndex, setRandomizedRowIndex] = useState(null); // store the index of the row because its `id` changes
 
   const tableRef = useRef();
 
@@ -21,9 +23,12 @@ const usePhotosTable = () => {
     getPageRows,
   } = usePaging({ totalRowsCount: photos.length });
 
-  useOutsideClick(tableRef, () =>
-    setRandomized((prevRandomized) => !prevRandomized)
-  );
+  useOutsideClick(tableRef, () => {
+    setRandomized((prevRandomized) => !prevRandomized);
+    setRandomizedRowIndex(null);
+  });
+
+  const pagePhotos = getPageRows(photos);
 
   const handlePhotoEdit = (e, photoId) => {
     e.stopPropagation();
@@ -54,6 +59,10 @@ const usePhotosTable = () => {
     setPhotos(nextPhotos);
   };
 
+  const handlePhotoTitleClick = (e) => {
+    e.stopPropagation(); // otherwise, clicking on the TextField would trigger `handleRowChange`, which would incorrectly toggle `randomizedRowIndex`
+  };
+
   const handlePhotoEditDone = (e, photoId) => {
     e.stopPropagation();
 
@@ -73,8 +82,28 @@ const usePhotosTable = () => {
 
   const handlePhotoDelete = (e, photoId) => {
     e.stopPropagation();
+
+    const rowIndex = getRowIndex(photoId);
+    if (rowIndex === randomizedRowIndex) setRandomizedRowIndex(null);
+
     const nextPhotos = photos.filter((photo) => photo.id !== photoId);
     setPhotos(nextPhotos);
+  };
+
+  const handleRowClick = (photoId) => {
+    const rowIndex = getRowIndex(photoId);
+
+    if (rowIndex !== randomizedRowIndex) {
+      setRandomizedRowIndex(rowIndex);
+    } else {
+      setRandomized(true); // could be `false` if the user had stopped randomization for the entire table before toggling the row
+      setRandomizedRowIndex(null);
+    }
+  };
+
+  const getRowIndex = (photoId) => {
+    const pagePhotoIds = pagePhotos.map((photo) => photo.id);
+    return pageNumber * PAGE_SIZE + pagePhotoIds.indexOf(photoId);
   };
 
   useEffect(() => {
@@ -91,11 +120,13 @@ const usePhotosTable = () => {
   }, []);
 
   useEffect(() => {
-    if (!randomized) return;
+    if (!randomized && randomizedRowIndex === null) return;
 
     const intervalId = setInterval(() => {
       const nextPhotos = photosRef.current.map((photo, index) =>
-        index >= pageFirstRowIndex && index <= pageLastRowIndex
+        index >= pageFirstRowIndex &&
+        index <= pageLastRowIndex &&
+        (randomizedRowIndex === null || index === randomizedRowIndex)
           ? {
               ...photo,
               id: getRandomInteger(1, 1000000),
@@ -108,18 +139,26 @@ const usePhotosTable = () => {
     }, 2000);
 
     return () => clearInterval(intervalId);
-  }, [randomized, photosRef, pageFirstRowIndex, pageLastRowIndex]);
+  }, [
+    randomized,
+    randomizedRowIndex,
+    photosRef,
+    pageFirstRowIndex,
+    pageLastRowIndex,
+  ]);
 
   return {
     tableRef,
-    pagePhotos: getPageRows(photos),
+    pagePhotos,
     pageNumber,
     totalPhotosCount: photos.length,
     handlePageChange,
     handlePhotoEdit,
     handlePhotoTitleChange,
+    handlePhotoTitleClick,
     handlePhotoEditDone,
     handlePhotoDelete,
+    handleRowClick,
   };
 };
 

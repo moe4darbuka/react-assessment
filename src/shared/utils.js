@@ -19,10 +19,10 @@ export const useOutsideClick = (ref, onOutsideClick) => {
       }
     };
 
-    document.body.addEventListener("click", handleOutsideClick);
+    document.addEventListener("click", handleOutsideClick);
 
     return () => {
-      document.body.removeEventListener("click", handleOutsideClick);
+      document.removeEventListener("click", handleOutsideClick);
     };
   }, [ref, onOutsideClick]);
 };
