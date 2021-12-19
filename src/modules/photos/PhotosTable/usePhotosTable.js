@@ -1,15 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import usePaging from "../../../shared/paging/usePaging";
+import { useOutsideClick, numberUtils } from "../../../shared/utils";
 import { fetchPhotos } from "../photosApi";
-import {
-  useStateWithRef,
-  useOutsideClick,
-  numberUtils,
-} from "../../../shared/utils";
 import { PAGE_SIZE } from "../../../shared/paging/constants";
 
 const usePhotosTable = () => {
-  const [photos, setPhotos, photosRef] = useStateWithRef([]);
+  const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [randomized, setRandomized] = useState(true);
@@ -132,29 +128,24 @@ const usePhotosTable = () => {
     if (!randomized && randomizedRowIndex === null) return;
 
     const intervalId = setInterval(() => {
-      const nextPhotos = photosRef.current.map((photo, index) =>
-        index >= pageFirstRowIndex &&
-        index <= pageLastRowIndex &&
-        (randomizedRowIndex === null || index === randomizedRowIndex)
-          ? {
-              ...photo,
-              id: numberUtils.getRandomInteger(1, 1000000),
-              albumId: numberUtils.getRandomInteger(1, 1000000),
-            }
-          : photo
-      );
+      const getNextPhotos = (prevPhotos) =>
+        prevPhotos.map((photo, index) =>
+          index >= pageFirstRowIndex &&
+          index <= pageLastRowIndex &&
+          (randomizedRowIndex === null || index === randomizedRowIndex)
+            ? {
+                ...photo,
+                id: numberUtils.getRandomInteger(1, 1000000),
+                albumId: numberUtils.getRandomInteger(1, 1000000),
+              }
+            : photo
+        );
 
-      setPhotos(nextPhotos);
+      setPhotos(getNextPhotos);
     }, 2000);
 
     return () => clearInterval(intervalId);
-  }, [
-    randomized,
-    randomizedRowIndex,
-    photosRef,
-    pageFirstRowIndex,
-    pageLastRowIndex,
-  ]);
+  }, [randomized, randomizedRowIndex, pageFirstRowIndex, pageLastRowIndex]);
 
   return {
     tableRef,
