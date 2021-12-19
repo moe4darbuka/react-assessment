@@ -10,6 +10,8 @@ import { PAGE_SIZE } from "../../../shared/paging/constants";
 
 const usePhotosTable = () => {
   const [photos, setPhotos, photosRef] = useStateWithRef([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [randomized, setRandomized] = useState(true);
   const [randomizedRowIndex, setRandomizedRowIndex] = useState(null); // store the index of the row because its `id` changes
 
@@ -107,16 +109,23 @@ const usePhotosTable = () => {
   };
 
   useEffect(() => {
-    fetchPhotos().then((data) => {
-      const nextPhotos = data.map((photo) => ({
-        ...photo,
-        editing: false,
-        editedTitle: photo.title,
-        editedTitleError: false,
-      }));
+    fetchPhotos()
+      .then((data) => {
+        const nextPhotos = data.map((photo) => ({
+          ...photo,
+          editing: false,
+          editedTitle: photo.title,
+          editedTitleError: false,
+        }));
 
-      setPhotos(nextPhotos);
-    });
+        setPhotos(nextPhotos);
+      })
+      .catch((error) => {
+        setError(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -149,6 +158,8 @@ const usePhotosTable = () => {
 
   return {
     tableRef,
+    loading,
+    error,
     pagePhotos,
     pageNumber,
     totalPhotosCount: photos.length,
