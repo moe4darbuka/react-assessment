@@ -10,6 +10,10 @@ import { PAGE_SIZE } from "../constants";
 //        and I didn't want the consumer to import both <TablePagination /> and <PaginationActions />
 //        each time.
 
+// N.B. I actually just realized that mui does provide a <Pagination /> component, and
+//   I didn't have to restrict myself to using <TablePagination />. I will leave things
+//   as is, as I ran out of time.
+
 const Paginator = ({
   pageNumber,
   pageSize = PAGE_SIZE,
