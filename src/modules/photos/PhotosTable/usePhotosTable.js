@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import usePaging from "../../../shared/paging/usePaging";
-import { getPhotos } from "./photosApi";
+import { fetchPhotos } from "../photosApi";
 import {
   useStateWithRef,
   useOutsideClick,
@@ -107,7 +107,7 @@ const usePhotosTable = () => {
   };
 
   useEffect(() => {
-    getPhotos().then((data) => {
+    fetchPhotos().then((data) => {
       const nextPhotos = data.map((photo) => ({
         ...photo,
         editing: false,
