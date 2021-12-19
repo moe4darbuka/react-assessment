@@ -4,7 +4,7 @@ import { getPhotos } from "./photosApi";
 import {
   useStateWithRef,
   useOutsideClick,
-  getRandomInteger,
+  numberUtils,
 } from "../../../shared/utils";
 import { PAGE_SIZE } from "../../../shared/paging/constants";
 
@@ -129,8 +129,8 @@ const usePhotosTable = () => {
         (randomizedRowIndex === null || index === randomizedRowIndex)
           ? {
               ...photo,
-              id: getRandomInteger(1, 1000000),
-              albumId: getRandomInteger(1, 1000000),
+              id: numberUtils.getRandomInteger(1, 1000000),
+              albumId: numberUtils.getRandomInteger(1, 1000000),
             }
           : photo
       );
