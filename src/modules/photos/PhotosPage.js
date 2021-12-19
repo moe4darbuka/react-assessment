@@ -21,8 +21,6 @@ const PhotosPage = () => {
     handleRowClick,
   } = usePhotosTable();
 
-  console.log("loading/error", loading, error);
-
   return (
     <PageLayout>
       <PageLayout.Title>Photos</PageLayout.Title>
