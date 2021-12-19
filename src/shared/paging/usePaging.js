@@ -3,7 +3,7 @@ import { useState } from "react";
 import { PAGE_SIZE } from "./constants";
 
 const usePaging = ({ pageSize = PAGE_SIZE, totalRowsCount }) => {
-  const [pageNumber, setPageNumber] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0); // the `page` prop of <TablePagination /> is zero-based
 
   const handlePageChange = (e, nextPageNumber) => {
     setPageNumber(nextPageNumber);
