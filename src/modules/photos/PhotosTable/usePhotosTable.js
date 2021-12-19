@@ -1,10 +1,17 @@
-import { useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import usePaging from "../../../shared/paging/usePaging";
 import { getPhotos } from "./photosApi";
-import { useStateWithRef, getRandomInteger } from "../../../shared/utils";
+import {
+  useStateWithRef,
+  useOutsideClick,
+  getRandomInteger,
+} from "../../../shared/utils";
 
 const usePhotosTable = () => {
   const [photos, setPhotos, photosRef] = useStateWithRef([]);
+  const [randomized, setRandomized] = useState(true);
+
+  const tableRef = useRef();
 
   const {
     pageNumber,
@@ -14,7 +21,13 @@ const usePhotosTable = () => {
     getPageRows,
   } = usePaging({ totalRowsCount: photos.length });
 
-  const handlePhotoEdit = (photoId) => {
+  useOutsideClick(tableRef, () =>
+    setRandomized((prevRandomized) => !prevRandomized)
+  );
+
+  const handlePhotoEdit = (e, photoId) => {
+    e.stopPropagation();
+
     const nextPhotos = photos.map((photo) =>
       photo.id === photoId
         ? {
@@ -27,7 +40,7 @@ const usePhotosTable = () => {
     setPhotos(nextPhotos);
   };
 
-  const handlePhotoTitleChange = (photoId, e) => {
+  const handlePhotoTitleChange = (e, photoId) => {
     const nextPhotos = photos.map((photo) =>
       photo.id === photoId
         ? {
@@ -41,7 +54,9 @@ const usePhotosTable = () => {
     setPhotos(nextPhotos);
   };
 
-  const handlePhotoEditDone = (photoId) => {
+  const handlePhotoEditDone = (e, photoId) => {
+    e.stopPropagation();
+
     const nextPhotos = photos.map((photo) =>
       photo.id === photoId
         ? {
@@ -56,7 +71,8 @@ const usePhotosTable = () => {
     setPhotos(nextPhotos);
   };
 
-  const handlePhotoDelete = (photoId) => {
+  const handlePhotoDelete = (e, photoId) => {
+    e.stopPropagation();
     const nextPhotos = photos.filter((photo) => photo.id !== photoId);
     setPhotos(nextPhotos);
   };
@@ -75,6 +91,8 @@ const usePhotosTable = () => {
   }, []);
 
   useEffect(() => {
+    if (!randomized) return;
+
     const intervalId = setInterval(() => {
       const nextPhotos = photosRef.current.map((photo, index) =>
         index >= pageFirstRowIndex && index <= pageLastRowIndex
@@ -90,9 +108,10 @@ const usePhotosTable = () => {
     }, 2000);
 
     return () => clearInterval(intervalId);
-  }, [photosRef, pageFirstRowIndex, pageLastRowIndex]);
+  }, [randomized, photosRef, pageFirstRowIndex, pageLastRowIndex]);
 
   return {
+    tableRef,
     pagePhotos: getPageRows(photos),
     pageNumber,
     totalPhotosCount: photos.length,

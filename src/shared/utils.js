@@ -11,6 +11,22 @@ export const useStateWithRef = (initialState) => {
   return [state, setState, ref];
 };
 
+export const useOutsideClick = (ref, onOutsideClick) => {
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (!ref.current.contains(e.target)) {
+        onOutsideClick();
+      }
+    };
+
+    document.body.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      document.body.removeEventListener("click", handleOutsideClick);
+    };
+  }, [ref, onOutsideClick]);
+};
+
 export const getRandomInteger = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };

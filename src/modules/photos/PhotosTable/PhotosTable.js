@@ -16,6 +16,7 @@ import "./PhotosTable.css";
 
 const PhotosTable = () => {
   const {
+    tableRef,
     pagePhotos,
     pageNumber,
     totalPhotosCount,
@@ -27,7 +28,7 @@ const PhotosTable = () => {
   } = usePhotosTable();
 
   return (
-    <Paper className="table" sx={{ width: "66.6667%" }}>
+    <Paper ref={tableRef} className="table" sx={{ width: "66.6667%" }}>
       <TableContainer>
         <Table stickyHeader={true}>
           <TableHead>
@@ -53,7 +54,7 @@ const PhotosTable = () => {
                       size="small"
                       value={photo.editedTitle}
                       error={photo.editedTitleError}
-                      onChange={(e) => handlePhotoTitleChange(photo.id, e)}
+                      onChange={(e) => handlePhotoTitleChange(e, photo.id)}
                     />
                   )}
                 </TableCell>
@@ -70,7 +71,7 @@ const PhotosTable = () => {
                       className="table__action-button"
                       variant="contained"
                       size="small"
-                      onClick={() => handlePhotoEdit(photo.id)}
+                      onClick={(e) => handlePhotoEdit(e, photo.id)}
                     >
                       Edit
                     </Button>
@@ -82,7 +83,7 @@ const PhotosTable = () => {
                       size="small"
                       color="success"
                       disabled={photo.editedTitleError}
-                      onClick={() => handlePhotoEditDone(photo.id)}
+                      onClick={(e) => handlePhotoEditDone(e, photo.id)}
                     >
                       Done
                     </Button>
@@ -92,7 +93,7 @@ const PhotosTable = () => {
                     variant="outlined"
                     size="small"
                     color="error"
-                    onClick={() => handlePhotoDelete(photo.id)}
+                    onClick={(e) => handlePhotoDelete(e, photo.id)}
                   >
                     Delete
                   </Button>
