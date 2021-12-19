@@ -1,11 +1,19 @@
-.photos-table__row-img {
+.photos-table__paper {
+  width: 66.6667%;
+}
+
+.photos-table__container {
+  height: calc(100vh - 200px);
+}
+
+.photos-table__img {
   width: 100px;
 }
 
-.MuiButton-root.table__action-button {
+.MuiButton-root.photos-table__action {
   margin-right: 8px;
 }
 
-.MuiButton-root.table__action-button:last-child {
+.MuiButton-root.photos-table__action:last-child {
   margin-right: 0;
 }

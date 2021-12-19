@@ -27,13 +27,13 @@ const PhotosTable = ({
   handleRowClick,
 }) => {
   return (
-    <Paper ref={tableRef} className="table" sx={{ width: "66.6667%" }}>
-      <TableContainer>
+    <Paper ref={tableRef} className="photos-table__paper">
+      <TableContainer className="photos-table__container">
         <Table stickyHeader={true}>
           <TableHead>
             <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell>Album Id</TableCell>
+              <TableCell width="120px">Id</TableCell>
+              <TableCell width="120px">Album Id</TableCell>
               <TableCell>Title</TableCell>
               <TableCell>Thumbnail</TableCell>
               <TableCell width="150px">Actions</TableCell>
@@ -60,7 +60,7 @@ const PhotosTable = ({
                 </TableCell>
                 <TableCell>
                   <img
-                    className="photos-table__row-img"
+                    className="photos-table__img"
                     src={photo.thumbnailUrl}
                     alt={photo.title}
                   />
@@ -68,7 +68,7 @@ const PhotosTable = ({
                 <TableCell>
                   {!photo.editing && (
                     <Button
-                      className="table__action-button"
+                      className="photos-table__action"
                       variant="contained"
                       size="small"
                       onClick={(e) => handlePhotoEdit(e, photo.id)}
@@ -78,7 +78,7 @@ const PhotosTable = ({
                   )}
                   {photo.editing && (
                     <Button
-                      className="table__action-button"
+                      className="photos-table__action"
                       variant="contained"
                       size="small"
                       color="success"
@@ -89,7 +89,7 @@ const PhotosTable = ({
                     </Button>
                   )}
                   <Button
-                    className="table__action-button"
+                    className="photos-table__action"
                     variant="outlined"
                     size="small"
                     color="error"
