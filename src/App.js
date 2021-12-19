@@ -1,10 +1,10 @@
 import React from "react";
-import PhotosTable from "./modules/photos/PhotosTable";
+import PhotosPage from "./modules/photos/PhotosPage";
 
 const App = () => {
   return (
     <div className="app">
-      <PhotosTable />
+      <PhotosPage />
     </div>
   );
 };
